@@ -14,5 +14,8 @@
   "bugs": {
     "url": "https://github.com/luetge/ships/issues"
   },
-  "homepage": "https://github.com/luetge/ships#readme"
+  "homepage": "https://github.com/luetge/ships#readme",
+  "dependencies": {
+    "phaser": "^3.10.1"
+  }
 }
