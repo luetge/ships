@@ -1,16 +1,9 @@
 import {AUTO, Game} from "phaser";
 
-if (module.hot) {
-  module.hot.accept(function () {
-    const game_element = document.querySelector('canvas');
-    game_element && game_element.parentNode.removeChild(game_element);
-  });
-}
-
 var config = {
     type: AUTO,
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
     physics: {
         default: 'arcade',
         arcade: {
@@ -36,8 +29,6 @@ function preload ()
 
 function create ()
 {
-    this.add.image(400, 300, 'sky');
-
     var particles = this.add.particles('red');
 
     var emitter = particles.createEmitter({
@@ -53,4 +44,11 @@ function create ()
     logo.setCollideWorldBounds(true);
 
     emitter.startFollow(logo);
+}
+
+if (module.hot) {
+  module.hot.accept(function () {
+    const game_element = document.querySelector('canvas');
+    game_element && game_element.parentNode.removeChild(game_element);
+  });
 }
