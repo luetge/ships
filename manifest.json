@@ -1,0 +1,10 @@
+{
+  "name": "Ships!",
+  "short_name": "Ships!",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "start_url": "/ships/",
+  "icons": []
+}

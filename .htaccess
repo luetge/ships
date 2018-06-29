@@ -1,0 +1,18 @@
+Order allow,deny
+Allow from all
+Satisfy Any
+
+AddType image/svg+xml svg svgz
+AddEncoding gzip svgz
+
+AddType image/svg+xml .svg
+AddOutputFilterByType DEFLATE image/svg+xml
+
+<FilesMatch "\.(js|css|html|htm|php|xml)$">
+SetOutputFilter DEFLATE
+AddOutputFilterByType DEFLATE text/html text/plain text/xml
+</FilesMatch>
+
+AddType application/font-woff .woff
+
+RequestHeader edit "If-None-Match" '^"((.*)-gzip)"$' '"$1", "$2"'
