@@ -37,16 +37,14 @@ function create ()
     player = this.physics.add.image(0, 0, 'boat')
     taxMan = this.physics.add.image(0, 0, 'boat')
     //player.setDebug(true, true, Phaser.Display.Color(255,255,0).color) // showBody, showVelocity, bodyColor
-    console.log(this)
-    console.log(player)
 
     player.setDamping(true)
     player.setDrag(.95)
     player.setMaxVelocity(100)
 
     taxMan.setDamping(true)
-    taxMan.setDrag(.9)
-    taxMan.setMaxVelocity(90)
+    taxMan.setDrag(.999)
+    taxMan.setMaxVelocity(110)
 
 
     player.__proto__.turnLeft = function () {player.setRotation(player.rotation - Math.PI / 36)}
@@ -69,27 +67,13 @@ function update ()
 	if (keys.UP.isDown == true){player.sail()}
 	else{player.setAcceleration(0)}
 
-	var a = Phaser.Math.Angle.Between(taxMan.x, taxMan.y, player.x, player.y)
-	console.log(a)
-	if (a > 0){
-		if (a > Math.PI/3){
-			taxMan.angle += Math.PI/3
-			taxMan.setAcceleration(0)
-		} else {
-			//taxMan.angle += a
-			if (Phaser.Math.Distance.Between(taxMan.x, taxMan.y, player.x, player.y) > 10)
-			taxMan.scene.physics.velocityFromRotation(taxMan.rotation, 90, taxMan.body.acceleration)
-		}
-	} else if (a < 0) {
-		if (a < -Math.PI/3){
-			taxMan.angle += -Math.PI/3
-			taxMan.setAcceleration(0)
-		} else {
-			//taxMan.angle += a
-			if (Phaser.Math.Distance.Between(taxMan.x, taxMan.y, player.x, player.y) > 10)
-			taxMan.scene.physics.velocityFromRotation(taxMan.rotation, 90, taxMan.body.acceleration)
-		}
-	}
+	var dist = Phaser.Math.Distance.Between(taxMan.x, taxMan.y, player.x, player.y)
+	var angleBetween = Phaser.Math.Angle.Between(taxMan.x, taxMan.y, player.x, player.y)
+	var angleDiff = angleBetween - taxMan.rotation
+	taxMan.rotation += angleDiff
+
+	if (Phaser.Math.Distance.Between(taxMan.x, taxMan.y, player.x, player.y) > 10)
+	taxMan.scene.physics.velocityFromRotation(taxMan.rotation, 90, taxMan.body.acceleration)
 	
 }
 
