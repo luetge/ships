@@ -1,4 +1,5 @@
 import {AUTO, Game} from "phaser";
+import boatImg from "/assets/sprites/Ships/boatymacboat.png"
 
 var config = {
     type: AUTO,
@@ -7,43 +8,94 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 200 }
+            fps: 60,
+            gravity: { y: 0 }
         }
     },
     scene: {
-        preload: preload,
-        create: create
+        preload,
+        create,
+        update,
+        render
     }
 };
 
 var game = new Game(config);
+var keys
+var player
+var taxMan
 
 function preload ()
 {
-    this.load.setBaseURL('http://labs.phaser.io');
-
-    this.load.image('sky', 'assets/skies/space3.png');
-    this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-    this.load.image('red', 'assets/particles/red.png');
+	console.log('preloading...')
+    this.load.image('boat', boatImg);
 }
 
 function create ()
 {
-    var particles = this.add.particles('red');
+	console.log('creating...')
+    player = this.physics.add.image(0, 0, 'boat')
+    taxMan = this.physics.add.image(0, 0, 'boat')
+    //player.setDebug(true, true, Phaser.Display.Color(255,255,0).color) // showBody, showVelocity, bodyColor
+    console.log(this)
+    console.log(player)
 
-    var emitter = particles.createEmitter({
-        speed: 100,
-        scale: { start: 1, end: 0 },
-        blendMode: 'ADD'
-    });
+    player.setDamping(true)
+    player.setDrag(.95)
+    player.setMaxVelocity(100)
 
-    var logo = this.physics.add.image(400, 100, 'logo');
+    taxMan.setDamping(true)
+    taxMan.setDrag(.9)
+    taxMan.setMaxVelocity(90)
 
-    logo.setVelocity(100, 200);
-    logo.setBounce(1, 1);
-    logo.setCollideWorldBounds(true);
 
-    emitter.startFollow(logo);
+    player.__proto__.turnLeft = function () {player.setRotation(player.rotation - Math.PI / 36)}
+    player.__proto__.turnRight = function () {player.setRotation(player.rotation + Math.PI / 36)}
+    // find better verb for navigating forward
+    player.__proto__.sail = function () {
+    	player.scene.physics.velocityFromRotation(player.rotation, 100, player.body.acceleration)}
+
+    //Phaser.Display.Align.In.Center(boat, this.add.zone(window.innerWidth/2, window.innerHeight/2, window.innerWidth, window.innerHeight))
+    keys = this.input.keyboard.addKeys('LEFT,RIGHT,UP')
+
+    //this.physic.add.image(window.innerWidth/2, innerHeight/2, player)
+
+}
+
+function update ()
+{
+	if (keys.LEFT.isDown == true){player.turnLeft()}
+	if (keys.RIGHT.isDown == true){player.turnRight()}
+	if (keys.UP.isDown == true){player.sail()}
+	else{player.setAcceleration(0)}
+
+	var a = Phaser.Math.Angle.Between(taxMan.x, taxMan.y, player.x, player.y)
+	console.log(a)
+	if (a > 0){
+		if (a > Math.PI/3){
+			taxMan.angle += Math.PI/3
+			taxMan.setAcceleration(0)
+		} else {
+			//taxMan.angle += a
+			if (Phaser.Math.Distance.Between(taxMan.x, taxMan.y, player.x, player.y) > 10)
+			taxMan.scene.physics.velocityFromRotation(taxMan.rotation, 90, taxMan.body.acceleration)
+		}
+	} else if (a < 0) {
+		if (a < -Math.PI/3){
+			taxMan.angle += -Math.PI/3
+			taxMan.setAcceleration(0)
+		} else {
+			//taxMan.angle += a
+			if (Phaser.Math.Distance.Between(taxMan.x, taxMan.y, player.x, player.y) > 10)
+			taxMan.scene.physics.velocityFromRotation(taxMan.rotation, 90, taxMan.body.acceleration)
+		}
+	}
+	
+}
+
+function render()
+{
+	//this.debug.inputInfo(20, 20)
 }
 
 if (module.hot) {
